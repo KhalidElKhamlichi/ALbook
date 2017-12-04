@@ -7,9 +7,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
 import { FacebookModule } from 'ngx-facebook';
-import { AlbumComponent } from './album/album.component';
+import { AlbumComponent } from './album-card/album-card.component';
 import { LoginComponent } from './login/login.component';
-import { MatButtonModule } from '@angular/material';
+import { MatButtonModule, MatCardModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -23,6 +23,7 @@ import { MatButtonModule } from '@angular/material';
     HttpModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    MatCardModule,
     FacebookModule.forRoot(),
     RouterModule.forRoot([
       { path: 'home', component: HomeComponent },

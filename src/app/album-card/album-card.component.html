@@ -1,0 +1,8 @@
+<mat-card>
+  <mat-card-title><a href="#">{{ album.name }}</a></mat-card-title>
+  <mat-card-subtitle>{{ album.photos.length }} photos</mat-card-subtitle>
+  <img mat-card-image [src]="album.photos[0].source">
+  <mat-card-actions align="center">
+    <button mat-raised-button color="primary">View</button>
+  </mat-card-actions>
+</mat-card>

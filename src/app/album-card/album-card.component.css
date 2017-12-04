@@ -1,0 +1,26 @@
+.mat-card{
+    width: 200px;
+    height: 300px;
+    margin: 4vw 2vw;
+    display: inline-block;
+}
+
+.mat-card-image{
+    width: 90%;
+    height: 50%;
+    padding: 1rem;
+    margin: auto;
+}
+
+.mat-card-actions .mat-raised-button{
+    margin: 3%;
+    padding: 0;
+    min-width: 1%;
+    font-size: 0.9rem;
+    width: 70px;
+    display: inline-block;
+}
+
+a{
+    text-decoration: none;
+}
