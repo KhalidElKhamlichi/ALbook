@@ -1,0 +1,57 @@
+<h1>Home</h1>
+<button (click)="loginWithFacebook()">
+    Login
+</button>
+<button (click)="getLoginStatus()">
+    Get login status
+  </button>
+  <button (click)="logout()">
+    Logout
+  </button>
+  <button (click)="getProfile()">
+    Get profile
+  </button>
+  <button (click)="getPhoto()">
+    Get photo
+  </button>
+  <button (click)="getPhotos()">
+    Get photos
+  </button>
+<div *ngFor="let photo of photos">
+  <img [src]="photo.source" [width]="photo.width" [height]="photo.height">
+</div>
+
+<script>
+  /*window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '1329354343859062',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version          : 'v2.11'
+    });
+    
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+  });
+  };
+
+  
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+   
+   function statusChangeCallback(response) {
+     if(response.status === 'connected') {
+       console.log("authenticated");
+     }
+     else {
+       console.log("not authenticated");
+     }
+   }*/
+
+</script>
