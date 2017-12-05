@@ -10,6 +10,7 @@ import { FacebookModule } from 'ngx-facebook';
 import { AlbumComponent } from './album-card/album-card.component';
 import { LoginComponent } from './login/login.component';
 import { MatButtonModule, MatCardModule } from '@angular/material';
+import { AlbumPhotosComponent } from './album-photos/album-photos.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { MatButtonModule, MatCardModule } from '@angular/material';
     HomeComponent,
     AlbumComponent,
     LoginComponent,
+    AlbumPhotosComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,7 +29,7 @@ import { MatButtonModule, MatCardModule } from '@angular/material';
     FacebookModule.forRoot(),
     RouterModule.forRoot([
       { path: 'home', component: HomeComponent },
-      { path: '', component: LoginComponent },
+      { path: 'albums/:id', component: AlbumPhotosComponent },
       { path: '**', component: LoginComponent }            
     ])
   ],

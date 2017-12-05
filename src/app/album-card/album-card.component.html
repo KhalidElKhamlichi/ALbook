@@ -1,8 +1,8 @@
 <mat-card>
-  <mat-card-title><a href="#">{{ album.name }}</a></mat-card-title>
+  <mat-card-title><a [routerLink]="['/albums', this.album.id]" >{{ album.name }}</a></mat-card-title>
   <mat-card-subtitle>{{ album.photos.length }} photos</mat-card-subtitle>
-  <img mat-card-image [src]="album.photos[0].source">
+  <a [routerLink]="['/albums', this.album.id]"><img mat-card-image [src]="album.photos[0].source"></a>
   <mat-card-actions align="center">
-    <button mat-raised-button color="primary">View</button>
+    <a [routerLink]="['/albums', this.album.id]"><button mat-raised-button color="primary">View</button></a>
   </mat-card-actions>
 </mat-card>

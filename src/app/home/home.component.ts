@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FacebookService, InitParams, LoginResponse } from 'ngx-facebook';
+import { FacebookService, InitParams, LoginResponse, AuthResponse } from 'ngx-facebook';
 import { Response } from '@angular/http/src/static_response';
 import { Album } from '../album';
 import { Router } from '@angular/router';
@@ -73,9 +73,11 @@ export class HomeComponent implements OnInit {
   }
 
   getLoginStatus(): any{
+    console.log(this.fb.getAuthResponse().signedRequest);
     this.fb.getLoginStatus()
       .then(console.log.bind(console))
       .catch(console.error.bind(console));
   }
+
 }
 
