@@ -1,7 +1,15 @@
 
 <div *ngIf="isLoaded">
-<span *ngFor="let photo of photos">
+<span *ngFor="let photo of photos; let i = index">
     <img [src]="photo.source">
+    <mat-checkbox (click)="SetPhotoSelection(i)"></mat-checkbox>        
+</span>
+</div>
+<div><h2>Selected photos:</h2></div>
+<div *ngIf="isLoaded">
+<span *ngFor="let photo of photosToExport; let i = index">
+    <img [src]="photo.source">
+    <mat-checkbox></mat-checkbox>        
 </span>
 </div>
 

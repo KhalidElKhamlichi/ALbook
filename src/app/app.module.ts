@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
 import { FacebookModule } from 'ngx-facebook';
 import { AlbumComponent } from './album-card/album-card.component';
 import { LoginComponent } from './login/login.component';
-import { MatButtonModule, MatCardModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatCheckboxModule } from '@angular/material';
 import { AlbumPhotosComponent } from './album-photos/album-photos.component';
 
 @NgModule({
@@ -26,6 +26,7 @@ import { AlbumPhotosComponent } from './album-photos/album-photos.component';
     BrowserAnimationsModule,
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
     FacebookModule.forRoot(),
     RouterModule.forRoot([
       { path: 'home', component: HomeComponent },

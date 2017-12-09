@@ -12,6 +12,8 @@ export class AlbumPhotosComponent implements OnInit {
   isLoaded: boolean = false;
   albumID: string;
   photos: any[] = [];
+  photosToExport: any[] = [];
+
   constructor(private fb: FacebookService, private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -34,6 +36,17 @@ export class AlbumPhotosComponent implements OnInit {
     })
     .catch((error: any) => console.error(error));        
       
-  } 
+  }
+  
+  SetPhotoSelection(index: number) {
+    if(this.photosToExport.includes(this.photos[index])) {
+      index = this.photosToExport.indexOf(this.photos[index]);
+      this.photosToExport.splice(index, 1);
+    }
+    else {
+      this.photosToExport.push(this.photos[index]);
+    }
+
+  }
   
 }
