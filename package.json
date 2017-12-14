@@ -23,10 +23,12 @@
     "@angular/platform-browser": "^5.0.0",
     "@angular/platform-browser-dynamic": "^5.0.0",
     "@angular/router": "^5.0.0",
+    "angularfire2": "^5.0.0-rc.4",
     "core-js": "^2.4.1",
+    "firebase": "^4.8.0",
+    "ngx-facebook": "latest",
     "rxjs": "^5.5.2",
-    "zone.js": "^0.8.14",
-    "ngx-facebook": "latest"
+    "zone.js": "^0.8.14"
   },
   "devDependencies": {
     "@angular/cli": "1.4.4",
