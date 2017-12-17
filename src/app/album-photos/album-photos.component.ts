@@ -4,6 +4,9 @@ import { FacebookService } from 'ngx-facebook';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { UploadFileService } from '../services/upload-file.service';
+import {PageEvent} from '@angular/material';
+import {MatSnackBar} from '@angular/material';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'album-photos',
@@ -18,14 +21,27 @@ export class AlbumPhotosComponent implements OnInit {
   photos: any[] = [];
   photosToExport: any[] = [];
 
-  progress: {percentage: number} = {percentage: 0}; // for progress bar
+  pageEvent: PageEvent = new PageEvent();
+  pageIndex: number = 0;
+  pageSize: number = 5;
+  pageSizeOptions = [5, 10, 25, 100];
+  length: number;
 
-  constructor(private fb: FacebookService, private route: ActivatedRoute, private http: HttpClient, private upSvc: UploadFileService) { }
+  progress: {percentage: number} = {percentage: 0}; // for progress bar
+  ctrSuccess: number = 0;
+  ctrFailure: number = 0;
+
+  checkAll: boolean = false;
+
+  constructor(private fb: FacebookService, private route: ActivatedRoute, private router: Router, private http: HttpClient, private upSvc: UploadFileService, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.albumID = this.route.snapshot.paramMap.get('id');
+    this.getProfile();    
     this.getPhotos();
-    this.getProfile();
+    
+    this.pageEvent.pageIndex = this.pageIndex;
+    this.pageEvent.pageSize = this.pageSize;
   }
 
 
@@ -40,6 +56,7 @@ export class AlbumPhotosComponent implements OnInit {
         }
       }
       this.isLoaded = true;
+      this.length = this.photos.length;
     })
     .catch((error: any) => console.error(error));        
       
@@ -57,13 +74,32 @@ export class AlbumPhotosComponent implements OnInit {
 
   uploadPhotos() {
     this.progress.percentage = 0;
+    this.ctrFailure = 0;
+    this.ctrSuccess = 0;
     for(let photo of this.photosToExport) {
       this.http.get(photo['source'], { responseType: 'blob' }).subscribe((data) => { // use the url to download the photo before uploading it
         let blob: Blob = new Blob([data], { type: "image/jpg"});
         let file = new File([blob], "image"+this.photos.indexOf(photo));
-        this.upSvc.pushFileToStorage(new FileUpload(file), this.profile['name'], this.photosToExport.length, this.progress);
+        this.upSvc.pushFileToStorage(new FileUpload(file), this.profile['name'], this.progress,  (success) => {this.onUpload(success)});
       });
     }
+  }
+
+  onUpload(success) {
+    if(success)
+      this.ctrSuccess++;
+    else
+      this.ctrFailure++;
+    this.isDone();
+  }
+
+  isDone() {
+    if(this.ctrSuccess + this.ctrFailure == this.photosToExport.length)
+      this.showSnackBar();
+  }
+
+  showSnackBar(): void {
+    this.snackBar.open(this.ctrSuccess+'/'+this.photosToExport.length+' photos exported')._dismissAfter(2500);
   }
 
   getProfile(): any {
@@ -73,7 +109,16 @@ export class AlbumPhotosComponent implements OnInit {
         this.profile = res;
         console.log(this.profile);
       })
-      .catch();
+      .catch(() => this.router.navigate(["/"]));
+  }
+
+  selectAll() {
+    this.checkAll = !this.checkAll;
+  }
+  
+  selectNone() {
+    this.checkAll = true;
+    this.checkAll = false;
   }
   
 }

@@ -6,22 +6,23 @@ img{
 
 span { 
     position: relative;
-    margin-left: 10px;
+    
 }
 mat-checkbox {
     position: absolute; 
     bottom: 10px;
     right: 10px;
     background-color: gray;
+    display: inline-block;
 }
 
-.ecport-section {
+.export-section {
     display: flex;
     align-content: center;
     align-items: center;
     height: 60px;
-  }
+}
   
-  .export-margin {
+.export-margin {
     margin: 0 10px;
-  }
+}

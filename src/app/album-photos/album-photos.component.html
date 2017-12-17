@@ -1,16 +1,28 @@
 
 <div *ngIf="isLoaded">
+    <div>
+        <mat-button-toggle (click)="selectAll()" style="margin: 10px;">Select all</mat-button-toggle>
+        
+    </div>
     <span *ngFor="let photo of photos; let i = index">
-        <img [src]="photo.source">
-        <mat-checkbox (click)="SetPhotoSelection(i)"></mat-checkbox>        
+        <ng-container *ngIf="i < (pageEvent.pageSize * (pageEvent.pageIndex+1)) && i >= (pageEvent.pageSize * pageEvent.pageIndex) ">
+            <img [src]="photo.source">
+            <mat-checkbox [checked]="checkAll" (click)="SetPhotoSelection(i)"></mat-checkbox>  
+        </ng-container>      
     </span>
+
+    <mat-paginator [length]="length"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="pageEvent = $event">
+    </mat-paginator>
 </div>
+
 <section class="export-section">
     <div><button mat-raised-button color="primary" (click)="uploadPhotos()">Export</button></div>
     <mat-progress-bar
         class="export-margin"        
-        [value]="progress.percentage"
-        >
+        [value]="progress.percentage/this.photosToExport.length">
     </mat-progress-bar>
   </section>
 

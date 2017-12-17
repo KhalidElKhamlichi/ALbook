@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
         console.log('Got the users profile', res);
         this.profile = res;
       })
-      .catch();
+      .catch(() => this.router.navigate(["/"]));
   }
 
   /*getPhoto() {

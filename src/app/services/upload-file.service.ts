@@ -11,7 +11,8 @@ export class UploadFileService {
  
   private basePath = '/photos';
  
-  pushFileToStorage(fileUpload: FileUpload, userId: string, nbrPhotos: number, progress: {percentage: number}) {
+  pushFileToStorage(fileUpload: FileUpload, userId: string, progress: {percentage: number}, onUpload: (success) => void) {
+
     const storageRef = firebase.storage().ref();
     const uploadTask = storageRef.child(`${this.basePath}/${userId}/${fileUpload.file.name}`).put(fileUpload.file, { contentType: "image/jpg"});
  
@@ -19,12 +20,13 @@ export class UploadFileService {
       (snapshot) => {
         // in progress
         const snap = snapshot as firebase.storage.UploadTaskSnapshot
-        progress.percentage += Math.round(((snap.bytesTransferred / snap.totalBytes) * 100)/nbrPhotos)+2/nbrPhotos
+        progress.percentage += Math.round((snap.bytesTransferred / snap.totalBytes) * 100)
       },
       (error) => {
         // fail
         console.log("upload fail");
         console.log(error);
+        onUpload(false);
       },
       () => {
         // success
@@ -32,8 +34,10 @@ export class UploadFileService {
         fileUpload.url = uploadTask.snapshot.downloadURL
         fileUpload.name = fileUpload.file.name
         this.saveFileData(fileUpload);
+        onUpload(true);
       }
     );
+    
   }
  
   private saveFileData(fileUpload: FileUpload) {

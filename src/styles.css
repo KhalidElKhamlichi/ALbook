@@ -3,5 +3,6 @@
 
 body{
     padding: 4vw 14vw;
-    background-color: lightgray;
+    background-color: rgb(236, 234, 234);
+    font-family: 'Proxima Nova Soft','Helvetica Neue',sans-serif;
 }
