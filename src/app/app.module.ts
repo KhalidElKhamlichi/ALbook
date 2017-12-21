@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
 import { FacebookModule } from 'ngx-facebook';
 import { AlbumComponent } from './album-card/album-card.component';
 import { LoginComponent } from './login/login.component';
-import { MatButtonModule, MatCardModule, MatCheckboxModule, MatProgressBarModule, MatPaginatorModule, MatSnackBarModule, MatButtonToggleModule } from '@angular/material';
+import { MatButtonModule, MatCardModule, MatCheckboxModule, MatProgressBarModule, MatPaginatorModule, MatSnackBarModule, MatButtonToggleModule, MatTooltipModule } from '@angular/material';
 import { AlbumPhotosComponent } from './album-photos/album-photos.component';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
@@ -36,6 +36,7 @@ import {environment} from '../environments/environment';
     MatPaginatorModule,
     MatSnackBarModule,
     MatButtonToggleModule,
+    MatTooltipModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule, // for database
     FacebookModule.forRoot(),

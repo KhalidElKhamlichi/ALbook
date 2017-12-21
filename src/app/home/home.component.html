@@ -1,19 +1,12 @@
-<h1 *ngIf="profile.name != undefined">Welcome {{ profile.name }}</h1>
-<div>
-  <button mat-raised-button (click)="getLoginStatus()">
-    Get login status
-  </button>
-  <button mat-raised-button (click)="logout()">
-    Logout
-  </button>
-  <button mat-raised-button (click)="getProfile()">
-    Get profile
-  </button>
-  <button mat-raised-button (click)="getAlbums()">
-    Get albums
-  </button>
+<div class="profile" *ngIf="profilePicture">
+  <img id="profilePicture" [src]="profilePicture">
+  <h1>{{ profile.name }}</h1>
+  <div class="logout">
+      <a href="#" (click)="logout()"><img matTooltip="Logout" src="https://png.icons8.com/ios/50/000000/exit.png" alt="Logout"></a>  
+  </div>
 </div>
 
+<h2>Albums</h2>
 <span *ngFor="let album of albums">
   <album-card [album]="album"></album-card>
 </span>
