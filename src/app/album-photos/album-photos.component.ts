@@ -62,7 +62,7 @@ export class AlbumPhotosComponent implements OnInit {
       
   }
   
-  SetPhotoSelection(index: number) {
+  setPhotoSelection(index: number) {
     if(this.photosToExport.includes(this.photos[index])) {
       index = this.photosToExport.indexOf(this.photos[index]);
       this.photosToExport.splice(index, 1);
@@ -114,11 +114,11 @@ export class AlbumPhotosComponent implements OnInit {
 
   selectAll() {
     this.checkAll = !this.checkAll;
-  }
-  
-  selectNone() {
-    this.checkAll = true;
-    this.checkAll = false;
+    for(let photo of this.photos) {
+      this.setPhotoSelection(this.photos.indexOf(photo));
+    } 
+
+    
   }
   
 }
