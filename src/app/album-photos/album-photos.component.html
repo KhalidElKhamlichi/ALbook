@@ -4,7 +4,7 @@
         <mat-button-toggle (click)="selectAll()" style="margin: 10px;">Select all</mat-button-toggle>     
     </div>
     <span *ngFor="let photo of photos; let i = index">
-        <ng-container *ngIf="i < (pageEvent.pageSize * (pageEvent.pageIndex+1)) && i >= (pageEvent.pageSize * pageEvent.pageIndex) ">
+        <ng-container *ngIf="i >= getStartIndex() && i < getEndIndex() ">
             <img [src]="photo.source">
             <mat-checkbox [checked]="checkAll" (click)="setPhotoSelection(i)"></mat-checkbox>  
         </ng-container>      
