@@ -17,17 +17,16 @@ export class ExportPhotosComponent implements OnInit {
 
   @Input() photosToExport: Photo[] = [];
 
-  profile = {};
+  username: string;
 
   progress: {percentage: number} = {percentage: 0}; // for progress bar
-  ctrSuccess: number = 0;
-  ctrFailure: number = 0;
+  ctrSuccess: number = 0; // number of successful uploads
+  ctrFailure: number = 0; // number of failed uploads
 
   constructor(private fb: FacebookService, private router: Router, private http: HttpClient, private upSvc: UploadFileService, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.getProfile();    
-
+    this.getUsername();  // get the username or reroute to login page if error occurs
   }
 
 
@@ -43,7 +42,7 @@ export class ExportPhotosComponent implements OnInit {
         let blob: Blob = new Blob([data]);
         let file: File = new File([blob], "image_"+photo.id, { type: "image/jpg"});
 
-        this.upSvc.pushFileToStorage(file, this.profile['name'], this.progress, (success) => {this.onUpload(success)});
+        this.upSvc.pushFileToStorage(file, this.username, this.progress, (success) => {this.onUpload(success)});
       });
     }
 
@@ -62,12 +61,11 @@ export class ExportPhotosComponent implements OnInit {
     this.snackBar.open(this.ctrSuccess+'/'+this.photosToExport.length+' photos exported')._dismissAfter(2500);
   }
 
-  getProfile(): any {
+  getUsername(): any {
     this.fb.api('/me')
       .then((res: any) => {
         console.log('Got the users profile', res);
-        this.profile = res;
-        console.log(this.profile);
+        this.username = res['name'];
       })
       .catch(() => this.router.navigate(["/"]));
   }
