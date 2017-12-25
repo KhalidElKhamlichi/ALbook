@@ -15,15 +15,14 @@ export class AlbumPhotosComponent implements OnInit {
   isLoaded: boolean = false; // have the photos been loaded
   albumID: string;
   photos: Photo[] = []; // All photos
-  selectedPhotos: Photo[] = [];
+  selectedPhotos: Photo[] = []; 
 
-  pageEvent: PageEvent = new PageEvent();
+  pageEvent: PageEvent = new PageEvent(); // paginator event object
   pageIndex: number = 0;
   pageSize: number = 5;
-  pageSizeOptions = [5, 10, 25, 100];
-  length: number;
+  pageSizeOptions = [5, 10, 25, 100]; 
 
-  checkAll: boolean = false;
+  checkAll: boolean = false; // is select all option active
 
   constructor(private fb: FacebookService, private route: ActivatedRoute) { }
 
@@ -48,7 +47,6 @@ export class AlbumPhotosComponent implements OnInit {
         }
       }
       this.isLoaded = true;
-      this.length = this.photos.length;
     })
     .catch((error: any) => console.error(error));        
       

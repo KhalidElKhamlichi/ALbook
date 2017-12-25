@@ -1,12 +1,14 @@
-<div class="profile" *ngIf="profilePicture">
-  <img id="profilePicture" [src]="profilePicture">
+<div *ngIf="profilePhoto && profile">
+  <img id="profilePicture" [src]="profilePhoto.source">
   <h1>{{ profile.name }}</h1>
-  <div class="logout">
-      <a href="#" (click)="logout()"><img matTooltip="Logout" src="https://png.icons8.com/ios/50/000000/exit.png" alt="Logout"></a>  
-  </div>
+  
 </div>
 
 <h2>Albums</h2>
 <span *ngFor="let album of albums">
   <album-card [album]="album"></album-card>
 </span>
+
+<div class="logout">
+  <a href="#" (click)="logout()"><img matTooltip="Logout" src="https://png.icons8.com/ios/50/000000/exit.png" alt="Logout"></a>  
+</div>

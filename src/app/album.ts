@@ -1,5 +1,8 @@
-export interface Album {
+import { Photo } from './photo';
+
+export class Album {
     id: string;
     name: string;
-    photos: any[];
+    photo: Photo;
+    length: number
 }

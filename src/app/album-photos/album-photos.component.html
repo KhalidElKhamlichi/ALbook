@@ -10,7 +10,7 @@
         </ng-container>      
     </span>
 
-    <mat-paginator [length]="length"
+    <mat-paginator [length]="this.photos.length"
     [pageSize]="pageSize"
     [pageSizeOptions]="pageSizeOptions"
     (page)="pageEvent = $event">

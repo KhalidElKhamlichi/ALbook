@@ -4,6 +4,8 @@ import { Response } from '@angular/http/src/static_response';
 import { Album } from '../album';
 import { Router } from '@angular/router';
 
+import { Photo } from './../photo';
+
 
 @Component({
   selector: 'home',
@@ -13,8 +15,9 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
 
   profile = {};
-  profilePicture = {};
+  profilePhoto: Photo;
   albums: Album[] = [];
+
   constructor(private fb: FacebookService, private router: Router) {}
 
   ngOnInit() {
@@ -32,49 +35,45 @@ export class HomeComponent implements OnInit {
       .then((res: any) => {
         console.log('Got the users profile', res);
         this.profile = res;
-        this.getProfilePicture();
+        this.getProfilePhoto();
       })
       .catch(() => this.router.navigate(["/"]));
   }
 
-  getProfilePicture() {
+  getProfilePhoto() {
     this.fb.api("/"+this.profile['id']+"/picture?type=normal")
     .then((response) => {
-      this.profilePicture = response.data.url;
+      this.profilePhoto = { id: "0",
+                          source: response.data.url };
     });
   }
 
   getAlbums() {
     this.fb.api("/me/albums?fields=id,name")
     .then((response) => { 
-      console.log(response.data.length);
+
       for (let i=0; i<response.data.length; i++) {
         let album: Album = {
           id: response.data[i].id,
           name: response.data[i].name,
-          photos: []
+          photo: new Photo(),
+          length: 0
         };    
         this.fb.api('/'+album.id+'/photos?fields=images')
         .then((photos) => {
-          if (photos && photos.data && photos.data.length){
-            for (let j=0; j<photos.data.length; j++){
-              let photo = photos.data[0];
-              album.photos.push(photo.images[j]);              
-            }
-            this.albums.push(album);
+          if (photos) {
+            let photo: Photo = { source: photos.data[0].images[1]['source'],
+                              id: photos.data[0].id };
+            album.photo = photo; 
+            album.length = photos.data.length;            
           }
+          this.albums.push(album);
+          
         });        
       }
     })
     .catch((error: any) => console.error(error));
   }
-
-  /*getLoginStatus(): any{
-    console.log(this.fb.getAuthResponse().signedRequest);
-    this.fb.getLoginStatus()
-      .then(console.log.bind(console))
-      .catch(console.error.bind(console));
-  }*/
 
 }
 
