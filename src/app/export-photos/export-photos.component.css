@@ -1,0 +1,10 @@
+.export-section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 60px;
+}
+  
+.export-margin {
+    margin: 0 10px;
+}

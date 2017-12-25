@@ -16,6 +16,7 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {UploadFileService} from './services/upload-file.service';
 
 import {environment} from '../environments/environment';
+import { ExportPhotosComponent } from './export-photos/export-photos.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import {environment} from '../environments/environment';
     AlbumComponent,
     LoginComponent,
     AlbumPhotosComponent,
+    ExportPhotosComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FacebookService } from 'ngx-facebook';
 import { ActivatedRoute } from '@angular/router';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { UploadFileService } from '../services/upload-file.service';
 import {PageEvent} from '@angular/material';
-import {MatSnackBar} from '@angular/material';
-import { Router } from '@angular/router';
+
+import { Photo } from './../photo';
 
 @Component({
   selector: 'album-photos',
@@ -15,10 +13,9 @@ import { Router } from '@angular/router';
 export class AlbumPhotosComponent implements OnInit {
 
   isLoaded: boolean = false; // have the photos been loaded
-  profile = {};
   albumID: string;
-  photos: any[] = []; // All photos
-  photosToExport: any[] = [];
+  photos: Photo[] = []; // All photos
+  selectedPhotos: Photo[] = [];
 
   pageEvent: PageEvent = new PageEvent();
   pageIndex: number = 0;
@@ -26,17 +23,12 @@ export class AlbumPhotosComponent implements OnInit {
   pageSizeOptions = [5, 10, 25, 100];
   length: number;
 
-  progress: {percentage: number} = {percentage: 0}; // for progress bar
-  ctrSuccess: number = 0;
-  ctrFailure: number = 0;
-
   checkAll: boolean = false;
 
-  constructor(private fb: FacebookService, private route: ActivatedRoute, private router: Router, private http: HttpClient, private upSvc: UploadFileService, public snackBar: MatSnackBar) { }
+  constructor(private fb: FacebookService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.albumID = this.route.snapshot.paramMap.get('id');
-    this.getProfile();    
     this.getPhotos();
     
     this.pageEvent.pageIndex = this.pageIndex;
@@ -47,11 +39,12 @@ export class AlbumPhotosComponent implements OnInit {
   getPhotos() {         
     this.fb.api('/'+this.albumID+'/photos?fields=images')
     .then((photos) => {
-      console.log(photos);
-      if (photos && photos.data && photos.data.length){
+      if (photos.data){
+        
         for (let j=0; j<photos.data.length; j++){
-          let photo = photos.data[j];
-          this.photos.push(photo.images[1]);              
+          let photo: Photo = { source: photos.data[j].images[1]['source'],
+                                id: photos.data[j].id };
+          this.photos.push(photo);              
         }
       }
       this.isLoaded = true;
@@ -63,58 +56,14 @@ export class AlbumPhotosComponent implements OnInit {
   
   setPhotoSelection(index: number) {
 
-    if(this.photosToExport.includes(this.photos[index])) { // remove photo from photosToExport if it already exists in it
-      index = this.photosToExport.indexOf(this.photos[index]);
-      this.photosToExport.splice(index, 1);
+    if(this.selectedPhotos.includes(this.photos[index])) { // remove photo from selectedPhotos if it already exists in it
+      index = this.selectedPhotos.indexOf(this.photos[index]);
+      this.selectedPhotos.splice(index, 1);
     }
     else {
-      this.photosToExport.push(this.photos[index]);
+      this.selectedPhotos.push(this.photos[index]);
     }
 
-  }
-
-  uploadPhotos() {
-
-    this.progress.percentage = 0;
-    this.ctrFailure = 0;
-    this.ctrSuccess = 0;
-
-    for(let photo of this.photosToExport) {
-      this.http.get(photo['source'], { responseType: 'blob' }).subscribe((data) => { // use the url to download the photo before uploading it
-        let blob: Blob = new Blob([data]);
-        let file: File = new File([blob], "image"+this.photos.indexOf(photo), { type: "image/jpg"});
-        console.log("type: "+file.type);
-        this.upSvc.pushFileToStorage(file, this.profile['name'], this.progress, (success) => {this.onUpload(success)});
-      });
-    }
-
-  }
-
-  onUpload(success) {
-    if(success)
-      this.ctrSuccess++;
-    else
-      this.ctrFailure++;
-    this.isDone();
-  }
-
-  isDone() {
-    if(this.ctrSuccess + this.ctrFailure == this.photosToExport.length)
-      this.showSnackBar();
-  }
-
-  showSnackBar(): void {
-    this.snackBar.open(this.ctrSuccess+'/'+this.photosToExport.length+' photos exported')._dismissAfter(2500);
-  }
-
-  getProfile(): any {
-    this.fb.api('/me')
-      .then((res: any) => {
-        console.log('Got the users profile', res);
-        this.profile = res;
-        console.log(this.profile);
-      })
-      .catch(() => this.router.navigate(["/"]));
   }
 
   selectAll() {

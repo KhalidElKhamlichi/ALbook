@@ -17,11 +17,5 @@
     </mat-paginator>
 </div>
 
-<section class="export-section">
-    <div><button mat-raised-button color="primary" (click)="uploadPhotos()">Export</button></div>
-    <mat-progress-bar
-        class="export-margin"        
-        [value]="progress.percentage/this.photosToExport.length">
-    </mat-progress-bar>
-  </section>
+<export-photos [photosToExport]="this.selectedPhotos"></export-photos>
 
