@@ -6,10 +6,12 @@
 }
 
 .mat-card-image{
+        
     width: 90%;
     height: 50%;
     padding: 1rem;
     margin: auto;
+    object-fit: cover;
 }
 
 .mat-card-actions .mat-raised-button{

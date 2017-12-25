@@ -1,18 +1,23 @@
-.profile {
+h1 {
     display: block;
-    margin: auto;
-    width: 30%;
+    margin: 25px auto;
+    width: 100%;
+    text-align: center;
 }
 
+
 #profilePicture {
-    margin-left: 25%;
+    display: block;
+    margin: auto;
+    width: 150px;
     border-radius: 50%;
 }
 
 .logout {
     display: block;
-    margin: 10px 30%;
+    margin: auto;
     width: 50px;
+   
 }
 
 h2 {
