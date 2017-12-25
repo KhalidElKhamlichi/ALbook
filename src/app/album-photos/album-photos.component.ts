@@ -1,4 +1,3 @@
-import { FileUpload } from './../file-upload';
 import { Component, OnInit } from '@angular/core';
 import { FacebookService } from 'ngx-facebook';
 import { ActivatedRoute } from '@angular/router';
@@ -18,7 +17,7 @@ export class AlbumPhotosComponent implements OnInit {
   isLoaded: boolean = false; // have the photos been loaded
   profile = {};
   albumID: string;
-  photos: any[] = [];
+  photos: any[] = []; // All photos
   photosToExport: any[] = [];
 
   pageEvent: PageEvent = new PageEvent();
@@ -63,26 +62,32 @@ export class AlbumPhotosComponent implements OnInit {
   }
   
   setPhotoSelection(index: number) {
-    if(this.photosToExport.includes(this.photos[index])) {
+
+    if(this.photosToExport.includes(this.photos[index])) { // remove photo from photosToExport if it already exists in it
       index = this.photosToExport.indexOf(this.photos[index]);
       this.photosToExport.splice(index, 1);
     }
     else {
       this.photosToExport.push(this.photos[index]);
     }
+
   }
 
   uploadPhotos() {
+
     this.progress.percentage = 0;
     this.ctrFailure = 0;
     this.ctrSuccess = 0;
+
     for(let photo of this.photosToExport) {
       this.http.get(photo['source'], { responseType: 'blob' }).subscribe((data) => { // use the url to download the photo before uploading it
-        let blob: Blob = new Blob([data], { type: "image/jpg"});
-        let file = new File([blob], "image"+this.photos.indexOf(photo));
-        this.upSvc.pushFileToStorage(new FileUpload(file), this.profile['name'], this.progress,  (success) => {this.onUpload(success)});
+        let blob: Blob = new Blob([data]);
+        let file: File = new File([blob], "image"+this.photos.indexOf(photo), { type: "image/jpg"});
+        console.log("type: "+file.type);
+        this.upSvc.pushFileToStorage(file, this.profile['name'], this.progress, (success) => {this.onUpload(success)});
       });
     }
+
   }
 
   onUpload(success) {
@@ -117,8 +122,14 @@ export class AlbumPhotosComponent implements OnInit {
     for(let photo of this.photos) {
       this.setPhotoSelection(this.photos.indexOf(photo));
     } 
+  }
 
-    
+  getStartIndex(): number {
+    return (this.pageEvent.pageSize * this.pageEvent.pageIndex);
+  }
+
+  getEndIndex(): number {
+    return (this.pageEvent.pageSize * (this.pageEvent.pageIndex+1));
   }
   
 }
