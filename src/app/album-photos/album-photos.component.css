@@ -16,3 +16,7 @@ mat-checkbox {
     display: inline-block;
 }
 
+mat-paginator {
+	background-color: rgb(236, 234, 234);
+}
+
