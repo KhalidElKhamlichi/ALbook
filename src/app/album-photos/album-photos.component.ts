@@ -12,17 +12,17 @@ import { Photo } from './../photo';
 })
 export class AlbumPhotosComponent implements OnInit {
 
-  isLoaded: boolean = false; // have the photos been loaded
+  isLoaded: boolean;
   albumID: string;
   photos: Photo[] = []; // All photos
   selectedPhotos: Photo[] = []; 
 
-  pageEvent: PageEvent = new PageEvent(); // paginator event object
+  paginatorEvent: PageEvent = new PageEvent();
   pageIndex: number = 0;
   pageSize: number = 5;
   pageSizeOptions = [5, 10, 25, 100]; 
 
-  checkAll: boolean = false; // is select all option active
+  isSelectAllActive: boolean;
 
   constructor(private fb: FacebookService, private route: ActivatedRoute) { }
 
@@ -30,53 +30,50 @@ export class AlbumPhotosComponent implements OnInit {
     this.albumID = this.route.snapshot.paramMap.get('id');
     this.getPhotos();
     
-    this.pageEvent.pageIndex = this.pageIndex;
-    this.pageEvent.pageSize = this.pageSize;
+    this.paginatorEvent.pageIndex = this.pageIndex;
+    this.paginatorEvent.pageSize = this.pageSize;
   }
 
 
   getPhotos() {         
     this.fb.api('/'+this.albumID+'/photos?fields=images')
     .then((photos) => {
-      if (photos.data){
-        
-        for (let j=0; j<photos.data.length; j++){
-          let photo: Photo = { source: photos.data[j].images[1]['source'],
-                                id: photos.data[j].id };
-          this.photos.push(photo);              
-        }
+      console.log(photos);
+      if (photos.data) {
+        photos.data.forEach(response => {
+          let photo: Photo = { source: response.images[1]['source'],
+                                id: response.id };
+          this.photos.push(photo);            
+        });
       }
       this.isLoaded = true;
     })
     .catch((error: any) => console.error(error));        
-      
   }
   
-  setPhotoSelection(index: number) {
-
-    if(this.selectedPhotos.includes(this.photos[index])) { // remove photo from selectedPhotos if it already exists in it
+  selectAll() {
+    this.isSelectAllActive = !this.isSelectAllActive;
+    for(let photo of this.photos) {
+      this.updatePhotoSelection(this.photos.indexOf(photo));
+    } 
+  }
+  
+  updatePhotoSelection(index: number) {
+    if(this.selectedPhotos.includes(this.photos[index])) { 
       index = this.selectedPhotos.indexOf(this.photos[index]);
       this.selectedPhotos.splice(index, 1);
     }
     else {
       this.selectedPhotos.push(this.photos[index]);
     }
-
-  }
-
-  selectAll() {
-    this.checkAll = !this.checkAll;
-    for(let photo of this.photos) {
-      this.setPhotoSelection(this.photos.indexOf(photo));
-    } 
   }
 
   getStartIndex(): number {
-    return (this.pageEvent.pageSize * this.pageEvent.pageIndex);
+    return (this.paginatorEvent.pageSize * this.paginatorEvent.pageIndex);
   }
 
   getEndIndex(): number {
-    return (this.pageEvent.pageSize * (this.pageEvent.pageIndex+1));
+    return (this.paginatorEvent.pageSize * (this.paginatorEvent.pageIndex+1));
   }
   
 }

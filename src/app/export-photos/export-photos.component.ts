@@ -5,7 +5,6 @@ import { FacebookService } from 'ngx-facebook';
 import {MatSnackBar} from '@angular/material';
 
 import { UploadFileService } from '../services/upload-file.service';
-import { Output } from '@angular/core/src/metadata/directives';
 import { Photo } from './../photo';
 
 @Component({
@@ -19,22 +18,34 @@ export class ExportPhotosComponent implements OnInit {
 
   username: string;
 
-  progress: {percentage: number} = {percentage: 0}; // for progress bar
-  ctrSuccess: number = 0; // number of successful uploads
-  ctrFailure: number = 0; // number of failed uploads
+  uploadProgress: {percentage: number};
+  nbrOfSuccessfulUploads: number
+  nbrOfFailedUploads: number;
 
-  constructor(private fb: FacebookService, private router: Router, private http: HttpClient, private upSvc: UploadFileService, public snackBar: MatSnackBar) { }
+  constructor(private fb: FacebookService, private router: Router, private http: HttpClient,
+     private uploadService: UploadFileService, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.getUsername();  // get the username or reroute to login page if error occurs
+    this.fb.api('/me')
+      .then(this.setUsername())
+      .catch(this.rerouteToHome());
   }
 
+  private rerouteToHome() {
+    return () => this.router.navigate(["/"]);
+  }
+
+  private setUsername() {
+    return (response: any) => {
+      this.username = response['name'];
+    };
+  }
 
   uploadPhotos() {
 
-    this.progress.percentage = 0;
-    this.ctrFailure = 0;
-    this.ctrSuccess = 0;
+    this.uploadProgress.percentage = 0;
+    this.nbrOfFailedUploads = 0;
+    this.nbrOfSuccessfulUploads = 0;
 
     for(let photo of this.photosToExport) {
       this.http.get(photo.source, { responseType: 'blob' }).subscribe((data) => { // use the url to download the photo before uploading it
@@ -42,7 +53,7 @@ export class ExportPhotosComponent implements OnInit {
         let blob: Blob = new Blob([data]);
         let file: File = new File([blob], "image_"+photo.id, { type: "image/jpg"});
 
-        this.upSvc.pushFileToStorage(file, this.username, this.progress, (success) => {this.onUpload(success)});
+        this.uploadService.pushFileToStorage(file, this.username, this.uploadProgress, (success) => {this.onUpload(success)});
       });
     }
 
@@ -50,25 +61,14 @@ export class ExportPhotosComponent implements OnInit {
 
   onUpload(success) {
     if(success)
-      this.ctrSuccess++;
+      this.nbrOfSuccessfulUploads++;
     else
-      this.ctrFailure++;
-    if(this.ctrSuccess + this.ctrFailure == this.photosToExport.length)
+      this.nbrOfFailedUploads++;
+    if(this.nbrOfSuccessfulUploads + this.nbrOfFailedUploads == this.photosToExport.length)
       this.showSnackBar();
   }
 
   showSnackBar(): void {
-    this.snackBar.open(this.ctrSuccess+'/'+this.photosToExport.length+' photos exported')._dismissAfter(2500);
+    this.snackBar.open(this.nbrOfSuccessfulUploads+'/'+this.photosToExport.length+' photos exported')._dismissAfter(2500);
   }
-
-  getUsername(): any {
-    this.fb.api('/me')
-      .then((res: any) => {
-        console.log('Got the users profile', res);
-        this.username = res['name'];
-      })
-      .catch(() => this.router.navigate(["/"]));
-  }
-
-
 }
