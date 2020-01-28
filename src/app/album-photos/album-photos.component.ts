@@ -14,7 +14,7 @@ export class AlbumPhotosComponent implements OnInit {
 
   isLoaded: boolean;
   albumID: string;
-  photos: Photo[] = []; // All photos
+  photos: Photo[] = [];
   selectedPhotos: Photo[] = []; 
 
   paginatorEvent: PageEvent = new PageEvent();
@@ -38,11 +38,9 @@ export class AlbumPhotosComponent implements OnInit {
   getPhotos() {         
     this.fb.api('/'+this.albumID+'/photos?fields=images')
     .then((photos) => {
-      console.log(photos);
       if (photos.data) {
         photos.data.forEach(response => {
-          let photo: Photo = { source: response.images[1]['source'],
-                                id: response.id };
+          let photo: Photo = new Photo(response.id, response.images[1]['source']);
           this.photos.push(photo);            
         });
       }

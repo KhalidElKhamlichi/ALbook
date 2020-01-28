@@ -6,14 +6,14 @@
     <span *ngFor="let photo of photos; let i = index">
         <ng-container *ngIf="i >= getStartIndex() && i < getEndIndex() ">
             <img [src]="photo.source">
-            <mat-checkbox [checked]="checkAll" (click)="setPhotoSelection(i)"></mat-checkbox>  
+            <mat-checkbox [checked]="isSelectAllActive" (click)="updatePhotoSelection(i)"></mat-checkbox>  
         </ng-container>      
     </span>
 
     <mat-paginator [length]="this.photos.length"
     [pageSize]="pageSize"
     [pageSizeOptions]="pageSizeOptions"
-    (page)="pageEvent = $event">
+    (page)="paginatorEvent = $event">
     </mat-paginator>
 </div>
 

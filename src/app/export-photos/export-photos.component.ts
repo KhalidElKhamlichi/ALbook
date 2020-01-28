@@ -18,7 +18,7 @@ export class ExportPhotosComponent implements OnInit {
 
   username: string;
 
-  uploadProgress: {percentage: number};
+  uploadProgress: {percentage: number} = {percentage: 0};
   nbrOfSuccessfulUploads: number
   nbrOfFailedUploads: number;
 
@@ -31,6 +31,25 @@ export class ExportPhotosComponent implements OnInit {
       .catch(this.rerouteToHome());
   }
 
+  uploadPhotos() {
+    this.uploadProgress.percentage = 0;
+    this.nbrOfFailedUploads = 0;
+    this.nbrOfSuccessfulUploads = 0;
+
+    for(let photo of this.photosToExport) {
+      this.http.get(photo.source, { responseType: 'blob' }).subscribe((data) => {
+        let file: File = this.createFile(data, photo);
+        // debugger
+        this.uploadService.pushFileToStorage(file, this.username, (success) => this.onUpload(success),
+         (uploadProgressPercentage) => this.updateProgressBar(uploadProgressPercentage));
+      });
+    }
+  }
+
+  updateProgressBar(progress: number): void {
+    this.uploadProgress.percentage += progress;
+  }
+
   private rerouteToHome() {
     return () => this.router.navigate(["/"]);
   }
@@ -41,25 +60,7 @@ export class ExportPhotosComponent implements OnInit {
     };
   }
 
-  uploadPhotos() {
-
-    this.uploadProgress.percentage = 0;
-    this.nbrOfFailedUploads = 0;
-    this.nbrOfSuccessfulUploads = 0;
-
-    for(let photo of this.photosToExport) {
-      this.http.get(photo.source, { responseType: 'blob' }).subscribe((data) => { // use the url to download the photo before uploading it
-
-        let blob: Blob = new Blob([data]);
-        let file: File = new File([blob], "image_"+photo.id, { type: "image/jpg"});
-
-        this.uploadService.pushFileToStorage(file, this.username, this.uploadProgress, (success) => {this.onUpload(success)});
-      });
-    }
-
-  }
-
-  onUpload(success) {
+  private onUpload(success) {
     if(success)
       this.nbrOfSuccessfulUploads++;
     else
@@ -68,7 +69,14 @@ export class ExportPhotosComponent implements OnInit {
       this.showSnackBar();
   }
 
-  showSnackBar(): void {
+  private showSnackBar(): void {
     this.snackBar.open(this.nbrOfSuccessfulUploads+'/'+this.photosToExport.length+' photos exported')._dismissAfter(2500);
   }
+
+  private createFile(data: Blob, photo: Photo) {
+    let blob: Blob = new Blob([data]);
+    let file: File = new File([blob], "image_" + photo.id, { type: "image/jpg" });
+    return file;
+  }
+
 }

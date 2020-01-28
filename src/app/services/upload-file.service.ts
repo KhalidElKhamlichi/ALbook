@@ -8,32 +8,35 @@ export class UploadFileService {
  
   constructor(private db: AngularFireDatabase) {}
  
-  private basePath = '/photos';
+  readonly basePath = '/photos';
  
-  pushFileToStorage(file: File, userId: string, progress: {percentage: number}, onUpload: (success) => void) {
-
-    // get a reference to firebase storage
+  pushFileToStorage(file: File, userId: string, onUpload: (success) => void, updateProgressBar: (progress: number) => void) {
     const storageRef = firebase.storage().ref();
-    // upload the file to the specified path
-    const uploadTask = storageRef.child(`${this.basePath}/${userId}/${file.name}`).put(file, { contentType: file.type});
- 
+    debugger
+    const uploadPath = `${this.basePath}/${userId}/${file.name}`;
+    const uploadTask = storageRef.child(uploadPath).put(file, { contentType: file.type});
     uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
       (snapshot) => {
-        // in progress
         const snap = snapshot as firebase.storage.UploadTaskSnapshot
-        // update progress bar
-        progress.percentage += Math.round((snap.bytesTransferred / snap.totalBytes) * 100)
+        const uploadPercentage = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+        updateProgressBar(uploadPercentage);
       },
-      (error) => {
-        // fail
-        console.log(error);
-        onUpload(false);
-      },
-      () => {
-        // success
-        onUpload(true);
-      }
+      this.onError(onUpload),
+      this.onComplete(onUpload)
     );
     
+  }
+
+  private onComplete(onUpload: (success: any) => void): firebase.Unsubscribe {
+    return () => {
+      onUpload(true);
+    };
+  }
+
+  private onError(onUpload: (success) => void): (a: Error) => any {
+    return (error) => {
+      console.log(error);
+      onUpload(false);
+    };
   }
 }
