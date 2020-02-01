@@ -43,6 +43,11 @@ export class SocialMediaService {
     .then(response => onSuccess(response));
   }
 
+  fetchPhotos(albumId: string, onSuccess: (photos) => void) {
+    this.facebook.api('/'+albumId+'/photos?fields=images')
+    .then((response) => onSuccess(response));
+  }
+
   logout() {
     this.facebook.logout().then(() => this.router.navigate(["/"]));
   }

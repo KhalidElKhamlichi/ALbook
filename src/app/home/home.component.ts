@@ -57,7 +57,6 @@ export class HomeComponent implements OnInit {
     this.socialMediaService.fetchFacebookAlbums(this.addFacebookAlbum());
   }
 
-
   private addFacebookAlbum(): (value: any) => void {
     return (album) => {
       this.socialMediaAlbums.push(album);
@@ -66,7 +65,6 @@ export class HomeComponent implements OnInit {
 
   private addExportedAlbum(): (value: any) => void {
     return (album) => {
-      debugger
       console.log("response");
       console.log(album);
       this.exportedAlbums.push(album);

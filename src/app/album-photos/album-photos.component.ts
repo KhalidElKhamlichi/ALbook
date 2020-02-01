@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import {PageEvent} from '@angular/material';
 
 import { Photo } from '../models/photo';
+import { SocialMediaService } from '../services/social-media.service';
 
 @Component({
   selector: 'album-photos',
@@ -13,7 +14,7 @@ import { Photo } from '../models/photo';
 export class AlbumPhotosComponent implements OnInit {
 
   isLoaded: boolean;
-  albumID: string;
+  albumId: string;
   photos: Photo[] = [];
   selectedPhotos: Photo[] = []; 
 
@@ -24,10 +25,11 @@ export class AlbumPhotosComponent implements OnInit {
 
   isSelectAllActive: boolean;
 
+  // constructor(private socialMediaService: SocialMediaService, private route: ActivatedRoute) { }
   constructor(private fb: FacebookService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.albumID = this.route.snapshot.paramMap.get('id');
+    this.albumId = this.route.snapshot.paramMap.get('id');
     this.getPhotos();
     
     this.paginatorEvent.pageIndex = this.pageIndex;
@@ -35,8 +37,8 @@ export class AlbumPhotosComponent implements OnInit {
   }
 
 
-  getPhotos() {         
-    this.fb.api('/'+this.albumID+'/photos?fields=images')
+  getPhotos() {     
+    this.fb.api('/'+this.albumId+'/photos?fields=images')
     .then((photos) => {
       if (photos.data) {
         photos.data.forEach(response => {
@@ -48,6 +50,22 @@ export class AlbumPhotosComponent implements OnInit {
     })
     .catch((error: any) => console.error(error));        
   }
+
+  // getPhotos() {     
+  //   this.socialMediaService.fetchPhotos(this.albumId, this.setSocialMediaPhotos());    
+  // }
+  
+  // private setSocialMediaPhotos(): any {
+  //   return (photos) => {
+  //     if (photos.data) {
+  //       photos.data.forEach(response => {
+  //         let photo: Photo = new Photo(response.id, response.images[1]['source']);
+  //         this.photos.push(photo);
+  //       });
+  //     }
+  //     this.isLoaded = true;
+  //   };
+  // }
   
   selectAll() {
     this.isSelectAllActive = !this.isSelectAllActive;
