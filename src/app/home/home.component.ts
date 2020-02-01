@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FacebookService, InitParams, LoginResponse, AuthResponse } from 'ngx-facebook';
-import { Album } from '../album';
+import { InitParams, LoginResponse, AuthResponse } from 'ngx-facebook';
+import { Album } from '../models/album';
 import { Router } from '@angular/router';
 
-import { Photo } from './../photo';
+import { Photo } from '../models/photo';
+import { SocialMediaService } from '../services/social-media.service';
+import { FirebaseService } from '../services/firebase.service';
 
 
 @Component({
@@ -15,9 +17,10 @@ export class HomeComponent implements OnInit {
 
   profile = {};
   profilePhoto: Photo;
-  albums: Album[] = [];
+  socialMediaAlbums: Album[] = [];
+  exportedAlbums: Album[] = [];
 
-  constructor(private facebook: FacebookService, private router: Router) {}
+  constructor(private socialMediaService: SocialMediaService, private firebaseService: FirebaseService, private router: Router) {}
 
   ngOnInit() {
     this.getProfile();
@@ -25,42 +28,49 @@ export class HomeComponent implements OnInit {
   }
 
   logout(): void {
-    this.facebook.logout().
-      then(() => this.router.navigate(["/"]));
+    this.socialMediaService.logout();
   }
 
   getProfile(): any {
-    this.facebook.api('/me')
-      .then((res: any) => {
-        this.profile = res;
-        this.getProfilePhoto();
-      })
-      .catch(() => this.router.navigate(["/"]));
+    this.socialMediaService.fetchProfile(this.setProfile());
+  }
+
+  private setProfile(): any {
+    return (res: any) => {
+      this.profile = res;
+      this.getProfilePhoto();
+      this.firebaseService.fetchExportedAlbums(this.profile['name'], this.addExportedAlbum());
+    };
   }
 
   getProfilePhoto() {
-    this.facebook.api("/"+this.profile['id']+"/picture?type=normal")
-    .then((response) => {
+    this.socialMediaService.fetchProfilePhoto(this.profile['id'], this.setProfilePhoto());
+  }
+
+  private setProfilePhoto(): any {
+    return (response) => {
       this.profilePhoto = new Photo("0", response.data.url);
-    });
+    };
   }
 
   getAlbums() {
-    this.facebook.api("/me/albums?fields=id,name")
-    .then((response) => { 
-      response.data.forEach(facebookAlbum => {    
-        this.facebook.api('/'+facebookAlbum.id+'/photos?fields=images')
-        .then((photos) => {
-            if (photos) {
-              let photo: Photo = new Photo(photos.data[0].id, photos.data[0].images[1]['source']);
-              let album: Album = new Album(facebookAlbum.id, facebookAlbum.name, photo, photos.data.length);
-              this.albums.push(album);
-            }    
-        });  
-      });
-    })
-    .catch((error: any) => console.error(error));
+    this.socialMediaService.fetchFacebookAlbums(this.addFacebookAlbum());
   }
 
+
+  private addFacebookAlbum(): (value: any) => void {
+    return (album) => {
+      this.socialMediaAlbums.push(album);
+    };
+  }
+
+  private addExportedAlbum(): (value: any) => void {
+    return (album) => {
+      debugger
+      console.log("response");
+      console.log(album);
+      this.exportedAlbums.push(album);
+    };
+  }
 }
 

@@ -4,8 +4,13 @@
   
 </div>
 
-<h2>Albums</h2>
-<span *ngFor="let album of albums">
+<h2>Facebook Albums</h2>
+<span *ngFor="let album of socialMediaAlbums">
+  <album-card [album]="album"></album-card>
+</span>
+
+<h2>Exported Albums</h2>
+<span *ngFor="let album of exportedAlbums">
   <album-card [album]="album"></album-card>
 </span>
 

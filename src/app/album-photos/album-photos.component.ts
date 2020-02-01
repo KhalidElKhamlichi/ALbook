@@ -3,7 +3,7 @@ import { FacebookService } from 'ngx-facebook';
 import { ActivatedRoute } from '@angular/router';
 import {PageEvent} from '@angular/material';
 
-import { Photo } from './../photo';
+import { Photo } from '../models/photo';
 
 @Component({
   selector: 'album-photos',

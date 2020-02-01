@@ -1,11 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { FacebookService } from 'ngx-facebook';
 import {MatSnackBar} from '@angular/material';
 
-import { UploadFileService } from '../services/upload-file.service';
-import { Photo } from './../photo';
+import { FirebaseService } from '../services/firebase.service';
+import { Photo } from '../models/photo';
+import { SocialMediaService } from '../services/social-media.service';
 
 @Component({
   selector: 'export-photos',
@@ -22,13 +22,11 @@ export class ExportPhotosComponent implements OnInit {
   nbrOfSuccessfulUploads: number
   nbrOfFailedUploads: number;
 
-  constructor(private fb: FacebookService, private router: Router, private http: HttpClient,
-     private uploadService: UploadFileService, public snackBar: MatSnackBar) { }
+  constructor(private socailMediaService: SocialMediaService, private router: Router, private http: HttpClient,
+     private uploadService: FirebaseService, public snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.fb.api('/me')
-      .then(this.setUsername())
-      .catch(this.rerouteToHome());
+    this.socailMediaService.fetchFacebookUsername(this.setUsername(), this.rerouteToHome());
   }
 
   uploadPhotos() {
@@ -39,14 +37,13 @@ export class ExportPhotosComponent implements OnInit {
     for(let photo of this.photosToExport) {
       this.http.get(photo.source, { responseType: 'blob' }).subscribe((data) => {
         let file: File = this.createFile(data, photo);
-        // debugger
         this.uploadService.pushFileToStorage(file, this.username, (success) => this.onUpload(success),
          (uploadProgressPercentage) => this.updateProgressBar(uploadProgressPercentage));
       });
     }
   }
 
-  updateProgressBar(progress: number): void {
+  private updateProgressBar(progress: number): void {
     this.uploadProgress.percentage += progress;
   }
 
@@ -56,7 +53,7 @@ export class ExportPhotosComponent implements OnInit {
 
   private setUsername() {
     return (response: any) => {
-      this.username = response['name'];
+      this.username = response;
     };
   }
 

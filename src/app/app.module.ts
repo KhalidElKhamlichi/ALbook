@@ -1,23 +1,23 @@
-import { HomeComponent } from './home/home.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-
-import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
-import { FacebookModule } from 'ngx-facebook';
-import { AlbumComponent } from './album-card/album-card.component';
-import { LoginComponent } from './login/login.component';
 import { MatButtonModule, MatCardModule, MatCheckboxModule, MatProgressBarModule,
    MatPaginatorModule, MatSnackBarModule, MatButtonToggleModule, MatTooltipModule } from '@angular/material';
-import { AlbumPhotosComponent } from './album-photos/album-photos.component';
 import {AngularFireModule} from 'angularfire2';
+import { FacebookModule } from 'ngx-facebook';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
-import {UploadFileService} from './services/upload-file.service';
 
-import {environment} from '../environments/environment';
+import { HomeComponent } from './home/home.component';
+import { AppComponent } from './app.component';
+import { AlbumComponent } from './album-card/album-card.component';
+import { LoginComponent } from './login/login.component';
+import { AlbumPhotosComponent } from './album-photos/album-photos.component';
+import {FirebaseService} from './services/firebase.service';
+import {SocialMediaService} from './services/social-media.service';
 import { ExportPhotosComponent } from './export-photos/export-photos.component';
+import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -49,7 +49,7 @@ import { ExportPhotosComponent } from './export-photos/export-photos.component';
       { path: '**', component: LoginComponent }            
     ])
   ],
-  providers: [UploadFileService],
+  providers: [FirebaseService, SocialMediaService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
