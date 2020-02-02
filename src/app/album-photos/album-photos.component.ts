@@ -5,6 +5,9 @@ import {PageEvent} from '@angular/material';
 
 import { Photo } from '../models/photo';
 import { SocialMediaService } from '../services/social-media.service';
+import { FirebaseService } from '../services/firebase.service';
+import { AlbumService } from '../services/album.service';
+import { AlbumSource } from '../models/album-source.enum';
 
 @Component({
   selector: 'album-photos',
@@ -15,6 +18,7 @@ export class AlbumPhotosComponent implements OnInit {
 
   isLoaded: boolean;
   albumId: string;
+  albumSource: AlbumSource = AlbumSource.Facebook;
   photos: Photo[] = [];
   selectedPhotos: Photo[] = []; 
 
@@ -25,47 +29,41 @@ export class AlbumPhotosComponent implements OnInit {
 
   isSelectAllActive: boolean;
 
-  // constructor(private socialMediaService: SocialMediaService, private route: ActivatedRoute) { }
-  constructor(private fb: FacebookService, private route: ActivatedRoute) { }
+  constructor(private socialMediaService: SocialMediaService, private firebaseService: FirebaseService,
+    private albumService: AlbumService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.albumId = this.route.snapshot.paramMap.get('id');
+    this.albumSource = this.albumService.getCurrentAlbumSource();
+    // this.albumService.getAlbumSource().subscribe(albumSource => this.albumSource = albumSource);
     this.getPhotos();
     
     this.paginatorEvent.pageIndex = this.pageIndex;
     this.paginatorEvent.pageSize = this.pageSize;
   }
 
+  getPhotos() {
+    if(this.albumSource == AlbumSource.Firebase)     
+      this.firebaseService.fetchPhotos(this.setExportedPhotos());
+    else
+      this.socialMediaService.fetchPhotos(this.albumId, this.setSocialMediaPhotos());    
+  }
 
-  getPhotos() {     
-    this.fb.api('/'+this.albumId+'/photos?fields=images')
-    .then((photos) => {
+  setExportedPhotos(): (photo: Photo) => void {
+    return (photo: Photo) => this.photos.push(photo);
+  }
+  
+  private setSocialMediaPhotos(): any {
+    return (photos) => {
       if (photos.data) {
         photos.data.forEach(response => {
           let photo: Photo = new Photo(response.id, response.images[1]['source']);
-          this.photos.push(photo);            
+          this.photos.push(photo);
         });
       }
       this.isLoaded = true;
-    })
-    .catch((error: any) => console.error(error));        
+    };
   }
-
-  // getPhotos() {     
-  //   this.socialMediaService.fetchPhotos(this.albumId, this.setSocialMediaPhotos());    
-  // }
-  
-  // private setSocialMediaPhotos(): any {
-  //   return (photos) => {
-  //     if (photos.data) {
-  //       photos.data.forEach(response => {
-  //         let photo: Photo = new Photo(response.id, response.images[1]['source']);
-  //         this.photos.push(photo);
-  //       });
-  //     }
-  //     this.isLoaded = true;
-  //   };
-  // }
   
   selectAll() {
     this.isSelectAllActive = !this.isSelectAllActive;

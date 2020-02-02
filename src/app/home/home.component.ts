@@ -35,26 +35,26 @@ export class HomeComponent implements OnInit {
     this.socialMediaService.fetchProfile(this.setProfile());
   }
 
+  getProfilePhoto() {
+    this.socialMediaService.fetchProfilePhoto(this.profile['id'], this.setProfilePhoto());
+  }
+
+  getAlbums() {
+    this.socialMediaService.fetchFacebookAlbums(this.addFacebookAlbum());
+  }
+
   private setProfile(): any {
     return (res: any) => {
       this.profile = res;
       this.getProfilePhoto();
-      this.firebaseService.fetchExportedAlbums(this.profile['name'], this.addExportedAlbum());
+      this.firebaseService.fetchExportedAlbum(this.profile['name'], this.addExportedAlbum());
     };
-  }
-
-  getProfilePhoto() {
-    this.socialMediaService.fetchProfilePhoto(this.profile['id'], this.setProfilePhoto());
   }
 
   private setProfilePhoto(): any {
     return (response) => {
       this.profilePhoto = new Photo("0", response.data.url);
     };
-  }
-
-  getAlbums() {
-    this.socialMediaService.fetchFacebookAlbums(this.addFacebookAlbum());
   }
 
   private addFacebookAlbum(): (value: any) => void {
@@ -65,8 +65,6 @@ export class HomeComponent implements OnInit {
 
   private addExportedAlbum(): (value: any) => void {
     return (album) => {
-      console.log("response");
-      console.log(album);
       this.exportedAlbums.push(album);
     };
   }

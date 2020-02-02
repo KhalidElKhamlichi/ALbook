@@ -3,6 +3,7 @@ import { FacebookService } from 'ngx-facebook';
 import { Photo } from '../models/photo';
 import { Album } from '../models/album';
 import { Router } from '@angular/router';
+import { AlbumSource } from '../models/album-source.enum';
 
 @Injectable()
 export class SocialMediaService {
@@ -23,13 +24,13 @@ export class SocialMediaService {
         .then((photos) => {
           if (photos) {
             let photo: Photo = new Photo(photos.data[0].id, photos.data[0].images[1]['source']);
-            let album: Album = new Album(facebookAlbum.id, facebookAlbum.name, photo, photos.data.length);
+            let album: Album = new Album(facebookAlbum.id, facebookAlbum.name, photo, photos.data.length, AlbumSource.Facebook);
             onSuccess(album);
           }
         });
-      })
-      .catch((error: any) => console.error(error));
-    });
+      })      
+    })
+    .catch((error: any) => console.error(error));;
   }
   
   fetchProfile(onSuccess: (response) => void) {

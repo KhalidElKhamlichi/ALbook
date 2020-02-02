@@ -18,6 +18,7 @@ import {FirebaseService} from './services/firebase.service';
 import {SocialMediaService} from './services/social-media.service';
 import { ExportPhotosComponent } from './export-photos/export-photos.component';
 import {environment} from '../environments/environment';
+import { AlbumService } from './services/album.service';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,7 @@ import {environment} from '../environments/environment';
       { path: '**', component: LoginComponent }            
     ])
   ],
-  providers: [FirebaseService, SocialMediaService],
+  providers: [FirebaseService, SocialMediaService, AlbumService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
