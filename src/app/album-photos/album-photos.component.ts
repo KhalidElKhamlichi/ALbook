@@ -34,8 +34,7 @@ export class AlbumPhotosComponent implements OnInit {
 
   ngOnInit() {
     this.albumId = this.route.snapshot.paramMap.get('id');
-    this.albumSource = this.albumService.getCurrentAlbumSource();
-    // this.albumService.getAlbumSource().subscribe(albumSource => this.albumSource = albumSource);
+    this.albumService.getObservableAlbumSource().subscribe((albumSource) => this.albumSource = albumSource);
     this.getPhotos();
     
     this.paginatorEvent.pageIndex = this.pageIndex;

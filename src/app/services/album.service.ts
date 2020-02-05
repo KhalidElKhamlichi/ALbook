@@ -13,10 +13,6 @@ export class AlbumService {
     return this.albumSource.asObservable();
   }
 
-  getCurrentAlbumSource(): AlbumSource {
-    return this.albumSource.getValue();
-  }
-  
   updateAlbumSource(albumSource: AlbumSource) {
     this.albumSource.next(albumSource);
   }
