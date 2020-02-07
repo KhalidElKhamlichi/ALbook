@@ -20,6 +20,7 @@ import { ExportPhotosComponent } from './export-photos/export-photos.component';
 import {environment} from '../environments/environment';
 import { AlbumService } from './services/album.service';
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
+import { DownloadPhotosComponent } from './download-photos/download-photos.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { ProgressBarComponent } from './progress-bar/progress-bar.component';
     AlbumPhotosComponent,
     ExportPhotosComponent,
     ProgressBarComponent,
+    DownloadPhotosComponent,
   ],
   imports: [
     BrowserModule,

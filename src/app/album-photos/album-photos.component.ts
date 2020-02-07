@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FacebookService } from 'ngx-facebook';
 import { ActivatedRoute } from '@angular/router';
 import {PageEvent} from '@angular/material';
 
@@ -41,14 +40,18 @@ export class AlbumPhotosComponent implements OnInit {
     this.paginatorEvent.pageSize = this.pageSize;
   }
 
-  getPhotos() {
-    if(this.albumSource == AlbumSource.Firebase)     
+  private getPhotos() {
+    if(this.isAlbumFromFirebase())     
       this.firebaseService.fetchPhotos(this.setExportedPhotos());
     else
       this.socialMediaService.fetchPhotos(this.albumId, this.setSocialMediaPhotos());    
   }
 
-  setExportedPhotos(): (photo: Photo) => void {
+  private isAlbumFromFirebase() {
+    return this.albumSource == AlbumSource.Firebase;
+  }
+
+  private setExportedPhotos(): (photo: Photo) => void {
     return (photo: Photo) => this.photos.push(photo);
   }
   
@@ -64,28 +67,38 @@ export class AlbumPhotosComponent implements OnInit {
     };
   }
   
-  selectAll() {
+  private selectAll() {
     this.isSelectAllActive = !this.isSelectAllActive;
-    for(let photo of this.photos) {
-      this.updatePhotoSelection(this.photos.indexOf(photo));
+    // let updatePhotoSelection = this.isSelectAllActive ? photo => this.selectedPhotos.push(photo) : photo => this.selectedPhotos.splice(this.selectedPhotos.indexOf(photo), 1);
+    const displayedPhotos = this.photos.slice(this.getStartIndex(), this.getEndIndex());
+    console.log(displayedPhotos);
+    for(let photo of displayedPhotos) {
+      this.updatePhotosSelection(photo);
     } 
   }
   
-  updatePhotoSelection(index: number) {
-    if(this.selectedPhotos.includes(this.photos[index])) { 
-      index = this.selectedPhotos.indexOf(this.photos[index]);
-      this.selectedPhotos.splice(index, 1);
-    }
-    else {
-      this.selectedPhotos.push(this.photos[index]);
+  private updatePhotosSelection(photo: Photo) {
+    if(this.isSelectAllActive) {
+       this.selectedPhotos.push(photo);
+    } else {
+      this.selectedPhotos.splice(this.selectedPhotos.indexOf(photo), 1);
     }
   }
 
-  getStartIndex(): number {
+  private updatePhotoSelection(event, photo: Photo) {
+    console.log(event);
+    if(this.selectedPhotos.includes(photo)) {
+      this.selectedPhotos.splice(this.selectedPhotos.indexOf(photo), 1);
+    } else {
+      this.selectedPhotos.push(photo);
+    }
+  }
+  
+  private getStartIndex(): number {
     return (this.paginatorEvent.pageSize * this.paginatorEvent.pageIndex);
   }
 
-  getEndIndex(): number {
+  private getEndIndex(): number {
     return (this.paginatorEvent.pageSize * (this.paginatorEvent.pageIndex+1));
   }
   

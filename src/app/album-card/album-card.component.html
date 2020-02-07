@@ -1,7 +1,7 @@
 <mat-card>
-  <mat-card-title><a [routerLink]="['/albums', this.album.id]" >{{ album.name }}</a></mat-card-title>
+  <mat-card-title><a [routerLink]="['/albums', this.album.id]" (click)="setAlbumSource()">{{ album.name }}</a></mat-card-title>
   <mat-card-subtitle>{{ album.totalPhotos }} photos</mat-card-subtitle>
-  <a [routerLink]="['/albums', this.album.id]"><img mat-card-image [src]="album.coverPhoto.source"></a>
+  <a [routerLink]="['/albums', this.album.id]" (click)="setAlbumSource()"><img mat-card-image [src]="album.coverPhoto.source"></a>
   <mat-card-actions align="center">
     <a [routerLink]="['/albums', this.album.id]"><button (click)="setAlbumSource()" mat-raised-button color="primary">View</button></a>
   </mat-card-actions>

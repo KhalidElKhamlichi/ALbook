@@ -6,7 +6,7 @@
     <span *ngFor="let photo of photos; let i = index">
         <ng-container *ngIf="i >= getStartIndex() && i < getEndIndex() ">
             <img [src]="photo.source">
-            <mat-checkbox [checked]="isSelectAllActive" (click)="updatePhotoSelection(i)"></mat-checkbox>  
+            <mat-checkbox [checked]="selectedPhotos.includes(photo)" (click)="updatePhotoSelection($event, photo)"></mat-checkbox>  
         </ng-container>      
     </span>
 
@@ -16,6 +16,6 @@
     (page)="paginatorEvent = $event">
     </mat-paginator>
 </div>
-
-<export-photos [photosToExport]="this.selectedPhotos"></export-photos>
+<export-photos *ngIf="!isAlbumFromFirebase()" [photosToExport]="this.selectedPhotos"></export-photos>
+<download-photos *ngIf="isAlbumFromFirebase()" [photosToExport]="this.selectedPhotos"></download-photos> 
 

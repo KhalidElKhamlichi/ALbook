@@ -1,7 +1,4 @@
 <section class="export-section">
   <div><button mat-raised-button color="primary" (click)="uploadPhotos()">Export</button></div>
-  <mat-progress-bar
-      class="export-margin"        
-      [value]="uploadProgress.percentage/this.photosToExport.length">
-  </mat-progress-bar>
+  <app-progress-bar></app-progress-bar>
 </section>
